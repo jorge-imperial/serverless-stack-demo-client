@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Auth } from "aws-amplify";
+//import { Auth } from "aws-amplify";
 import { Link, withRouter } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import Routes from "./Routes";
 import "./App.css";
+
+
+// TODO: this should not be here
+const {
+  Stitch
+} = require('mongodb-stitch-browser-sdk');
+
+
 
 function App(props) {
   const [isAuthenticating, setIsAuthenticating] = useState(true);
@@ -16,7 +24,9 @@ function App(props) {
 
   async function onLoad() {
     try {
-      await Auth.currentSession();
+      //await Auth.currentSession();
+      Stitch.initializeDefaultAppClient('appia-xrvyn');
+
       userHasAuthenticated(true);
     }
     catch(e) {
@@ -29,8 +39,10 @@ function App(props) {
   }
 
   async function handleLogout() {
-    await Auth.signOut();
+    //await Auth.signOut();
 
+    const client = Stitch.getAppClient('appia-xrvyn');
+    client.auth.logout();
     userHasAuthenticated(false);
 
     props.history.push("/login");

@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { Auth } from "aws-amplify";
+//import { Auth } from "aws-amplify";
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import "./Login.css";
+
+
+// TODO: this should not be here
+const {
+  Stitch,
+  UserPasswordCredential,
+} = require('mongodb-stitch-browser-sdk');
+
 
 export default function Login(props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +30,12 @@ export default function Login(props) {
     setIsLoading(true);
 
     try {
-      await Auth.signIn(fields.email, fields.password);
+      // await Auth.signIn(fields.email, fields.password);
+      const client = Stitch.getAppClient('appia-xrvyn');
+
+      const credential = new UserPasswordCredential(fields.email, fields.password);
+      await client.auth.loginWithCredential(credential);  
+          
       props.userHasAuthenticated(true);
     } catch (e) {
       alert(e.message);
