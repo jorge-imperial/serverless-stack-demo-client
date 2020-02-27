@@ -6,13 +6,10 @@ import { LinkContainer } from "react-router-bootstrap";
 import Routes from "./Routes";
 import "./App.css";
 
-
-// TODO: this should not be here
+// Stitch FTW!
 const {
   Stitch
 } = require('mongodb-stitch-browser-sdk');
-
-
 
 function App(props) {
   const [isAuthenticating, setIsAuthenticating] = useState(true);
@@ -41,7 +38,7 @@ function App(props) {
   async function handleLogout() {
     //await Auth.signOut();
 
-    const client = Stitch.getAppClient('appia-xrvyn');
+    const client = Stitch.defaultAppClient; // Already initialized.
     client.auth.logout();
     userHasAuthenticated(false);
 
