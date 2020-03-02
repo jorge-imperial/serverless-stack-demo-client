@@ -23,7 +23,6 @@ function App(props) {
     try {
       //await Auth.currentSession();
       Stitch.initializeDefaultAppClient('appia-xrvyn');
-
       userHasAuthenticated(true);
     }
     catch(e) {

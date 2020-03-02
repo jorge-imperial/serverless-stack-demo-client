@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Auth } from "aws-amplify";
+
 import {
   HelpBlock,
   FormGroup,
@@ -9,6 +9,13 @@ import {
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import "./Signup.css";
+
+const {
+  Stitch,
+  UserPasswordAuthProviderClient,
+  UserPasswordCredential
+} = require('mongodb-stitch-browser-sdk');
+
 
 export default function Signup(props) {
   const [fields, handleFieldChange] = useFormFields({
@@ -38,10 +45,10 @@ export default function Signup(props) {
     setIsLoading(true);
 
     try {
-      const newUser = await Auth.signUp({
-        username: fields.email,
-        password: fields.password
-      });
+      // Register the user.
+      const emailPwdClient = Stitch.defaultAppClient.auth.getProviderClient(UserPasswordAuthProviderClient.factory);
+      await emailPwdClient.registerWithEmail(fields.email, fields.password);
+
       setIsLoading(false);
       setNewUser(newUser);
     } catch (e) {
@@ -56,8 +63,11 @@ export default function Signup(props) {
     setIsLoading(true);
 
     try {
-      await Auth.confirmSignUp(fields.email, fields.confirmationCode);
-      await Auth.signIn(fields.email, fields.password);
+      //await Auth.confirmSignUp(fields.email, fields.confirmationCode);
+      //await Auth.signIn(fields.email, fields.password);
+      const client = Stitch.defaultAppClient; 
+      const credential = new UserPasswordCredential(fields.email, fields.password);
+      await client.auth.loginWithCredential(credential);  
 
       props.userHasAuthenticated(true);
       props.history.push("/");
